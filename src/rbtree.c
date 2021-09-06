@@ -18,7 +18,7 @@ node_t *rbtree_insert(rbtree *t, const key_t key) {
     t->root = calloc(sizeof(node_t), 1);
     t = t->root;
     t->root->left = new_rbtree();
-  }
+  } 
   return t->root;
 }
 
