@@ -12,8 +12,13 @@ void delete_rbtree(rbtree *t) {
   free(t);
 }
 
-node_t *rbtree_insert(const rbtree *t, const key_t key) {
+node_t *rbtree_insert(rbtree *t, const key_t key) {
   // TODO: implement insert
+  if (t->root == NULL) {
+    t->root = calloc(sizeof(node_t), 1);
+    t = t->root;
+    t->root->left = new_rbtree();
+  }
   return t->root;
 }
 
@@ -32,7 +37,7 @@ node_t *rbtree_max(const rbtree *t) {
   return t->root;
 }
 
-int rbtree_erase(const rbtree *t, node_t *p) {
+int rbtree_erase(rbtree *t, node_t *p) {
   // TODO: implement erase
   return 0;
 }
