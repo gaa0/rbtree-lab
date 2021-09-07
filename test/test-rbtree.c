@@ -7,7 +7,7 @@
 // new_rbtree should return rbtree struct with null root node
 void test_init(void) {
   rbtree *t = new_rbtree();
-  assert(t != NULL);  // t가 NULL이면 프로그램 중단
+  assert(t != NULL);
   assert(t->root == NULL);
   delete_rbtree(t);
 }
@@ -17,7 +17,7 @@ void test_insert_single(const key_t key) {
   rbtree *t = new_rbtree();
   node_t *p = rbtree_insert(t, key);
   assert(p != NULL);
-  assert(t->root != p);
+  assert(t->root == p);
   assert(p->key == key);
   // assert(p->color == RBTREE_BLACK);  // color of root node should be black
   assert(p->left == NULL);
@@ -47,7 +47,7 @@ void test_erase_root(const key_t key) {
   rbtree *t = new_rbtree();
   node_t *p = rbtree_insert(t, key);
   assert(p != NULL);
-  assert(t->root != p);
+  assert(t->root == p);
   assert(p->key == key);
 
   rbtree_erase(t, p);
@@ -63,8 +63,8 @@ static void insert_arr(rbtree *t, const key_t *arr, const size_t n) {
 }
 
 static int comp(const void *p1, const void *p2) {
-  const key_t *e1 = (const key_t *) p1;
-  const key_t *e2 = (const key_t *) p2;
+  const key_t *e1 = (const key_t *)p1;
+  const key_t *e2 = (const key_t *)p2;
   if (*e1 < *e2) {
     return -1;
   } else if (*e1 > *e2) {
@@ -76,13 +76,16 @@ static int comp(const void *p1, const void *p2) {
 
 // min/max should return the min/max value of the tree
 void test_minmax(key_t *arr, const size_t n) {
+  // null array is not allowed
+  assert(n > 0 && arr != NULL);
+
   rbtree *t = new_rbtree();
   assert(t != NULL);
 
   insert_arr(t, arr, n);
   assert(t->root != NULL);
 
-  qsort((void *) arr, n, sizeof(key_t), comp);
+  qsort((void *)arr, n, sizeof(key_t), comp);
   node_t *p = rbtree_min(t);
   assert(p != NULL);
   assert(p->key == arr[0]);
@@ -91,12 +94,10 @@ void test_minmax(key_t *arr, const size_t n) {
   assert(q != NULL);
   assert(q->key == arr[n - 1]);
 
-  if (n >= 1) {
-    rbtree_erase(t, p);
-    p = rbtree_min(t);
-    assert(p != NULL);
-    assert(p->key == arr[1]);
-  }
+  rbtree_erase(t, p);
+  p = rbtree_min(t);
+  assert(p != NULL);
+  assert(p->key == arr[1]);
 
   if (n >= 2) {
     rbtree_erase(t, q);
@@ -238,10 +239,10 @@ void test_minmax_suite() {
 int main(void) {
   test_init();
   test_insert_single(1024);
-  // test_find_single(512, 1024);
-  // test_erase_root(128);
-  // test_minmax_suite();
-  // test_distinct_values();
+  test_find_single(512, 1024);
+  test_erase_root(128);
+  test_minmax_suite();
+  test_distinct_values();
   // test_duplicate_values();
   printf("Passed all tests!\n");
 }
