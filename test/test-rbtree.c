@@ -59,6 +59,8 @@ void test_erase_root(const key_t key) {
 static void insert_arr(rbtree *t, const key_t *arr, const size_t n) {
   for (size_t i = 0; i < n; i++) {
     rbtree_insert(t, arr[i]);
+    // print_inorder(t->root);
+    // printf("\n");
   }
 }
 
@@ -243,6 +245,6 @@ int main(void) {
   test_erase_root(128);
   test_minmax_suite();
   test_distinct_values();
-  // test_duplicate_values();
+  test_duplicate_values();
   printf("Passed all tests!\n");
 }

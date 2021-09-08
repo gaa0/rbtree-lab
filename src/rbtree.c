@@ -42,42 +42,44 @@ void left_rotate(rbtree *t, node_t *x) {
   x->parent = y;
 }
 
-void right_rotate(rbtree *t, node_t *x) {
-  node_t *y = x->left;
-  x->left = y->right;
-  if (y->right != NULL) {
-    y->right->parent = x;
+void right_rotate(rbtree *t, node_t *y) {
+  node_t *x = y->left;
+  y->left = x->right;
+  if (x->right != NULL) {
+    x->right->parent = x;
   }
-  y->parent = x->parent;
-  if (x->parent == NULL) {
-    t->root = y;
-  } else if (x == x->parent->right) {
-    x->parent->right = y;
+  x->parent = y->parent;
+  if (y->parent == NULL) {
+    t->root = x;
+  } else if (y == y->parent->right) {
+    y->parent->right = x;
   } else {
-    x->parent->left = y;
+    y->parent->left = x;
   }
-  y->right = x;
-  x->parent = y;
+  x->right = y;
+  y->parent = x;
 }
 
 void rbtree_insert_fixup(rbtree *t, node_t *z) {
   while (z->parent && z->parent->parent && z->parent->color == RBTREE_RED) {
     if (z->parent == z->parent->parent->left) {
       node_t *y = z->parent->parent->right;
-      if (y && y->color == RBTREE_RED) {
+      if (y && y->color == RBTREE_RED) {  // z의 삼촌 y가 적색인 경우
         z->parent->color = RBTREE_BLACK;
         y->color = RBTREE_BLACK;
         z->parent->parent->color = RBTREE_RED;
         z = z->parent->parent;
-      } else if (z == z->parent->right) {  // z의 삼촌 y가 흑색이며 z가 오른쪽 자식인 경우
-        z = z->parent;
-        left_rotate(t, z);
-      }
-      if (z->parent) {
-        z->parent->color = RBTREE_BLACK;
-        if (z->parent->parent) {
-          z->parent->parent->color = RBTREE_RED;
-          right_rotate(t, z->parent->parent);
+      } else {
+        if (z == z->parent->right) {  // z의 삼촌 y가 흑색이며 z가 오른쪽 자식인 경우
+          z = z->parent;
+          left_rotate(t, z);
+        }
+        if (z->parent) {
+          z->parent->color = RBTREE_BLACK;
+          if (z->parent->parent) {
+            z->parent->parent->color = RBTREE_RED;
+            right_rotate(t, z->parent->parent);
+          }
         }
       }
     } else {
@@ -87,17 +89,22 @@ void rbtree_insert_fixup(rbtree *t, node_t *z) {
         y->color = RBTREE_BLACK;
         z->parent->parent->color = RBTREE_RED;
         z = z->parent->parent;
-      } else if (z == z->parent->left) {
-        z = z->parent;
-        right_rotate(t, z);
-      }
-      if (z->parent) {
-        z->parent->color = RBTREE_BLACK;
-        z->parent->parent->color = RBTREE_RED;
-        left_rotate(t, z->parent->parent);
+      } else {
+          if (z == z->parent->left) {
+            z = z->parent;
+            right_rotate(t, z);
+          }
+        if (z->parent) {
+          z->parent->color = RBTREE_BLACK;
+          if (z->parent->parent) {
+            z->parent->parent->color = RBTREE_RED;
+            left_rotate(t, z->parent->parent);
+          }
+        }
       }
     }
   }
+  // printf("%d \n\n", t->root->key);
   t->root->color = RBTREE_BLACK;
 }
 
@@ -272,3 +279,11 @@ int rbtree_to_array(const rbtree *t, key_t *arr, const size_t n) {
   // TODO: implement to_array
   return 0;
 }
+
+// void print_inorder(node_t *root) {
+//   if (root == NULL)
+//     return ;
+//   print_inorder(root -> left);
+//   printf("%d   %d\n", root -> key, root -> color);
+//   print_inorder(root -> right);
+// }

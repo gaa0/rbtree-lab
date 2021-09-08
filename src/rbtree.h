@@ -28,4 +28,6 @@ int rbtree_erase(rbtree *, node_t *);
 
 int rbtree_to_array(const rbtree *, key_t *, const size_t);
 
+// void print_inorder(node_t *root);
+
 #endif  // RBTREE_H_
